@@ -58,6 +58,7 @@ def make_plateau_scheduler(optimizer, mode='min', factor=0.5, patience=3, verbos
         return optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode=mode, factor=factor, patience=patience)
 
 class FocalLoss(nn.Module):
+    
     """Focal Loss for multi-class classification.
     Args:
         gamma (float): focusing parameter.
