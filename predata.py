@@ -2,19 +2,15 @@
 prepare_data_isic_gpu_ptbr.py
 Pipeline completo ISIC com variáveis em português
 """
-
 import os
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Optional, Tuple
-
 import cv2
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import GroupShuffleSplit
-
 # ====================== CONFIGURAÇÃO GPU ======================
-
 def verificar_gpu():
     print(f"[INFO] OpenCV Version: {cv2.__version__}")
     try:
@@ -30,9 +26,7 @@ def verificar_gpu():
     return False
 
 USAR_GPU = verificar_gpu()
-
 # ====================== FUNÇÕES DE PROCESSAMENTO ======================
-
 def remover_marcadores_coloridos(imagem_bgr):
     hsv = cv2.cvtColor(imagem_bgr, cv2.COLOR_BGR2HSV)
 
@@ -51,8 +45,6 @@ def remover_marcadores_coloridos(imagem_bgr):
     mascara_total = cv2.morphologyEx(mascara_total, cv2.MORPH_CLOSE, kernel)
 
     return cv2.inpaint(imagem_bgr, mascara_total, 10, cv2.INPAINT_TELEA)
-
-
 def remover_pelos_dullrazor(imagem_bgr):
     imagem = remover_marcadores_coloridos(imagem_bgr)
     cinza = cv2.cvtColor(imagem, cv2.COLOR_BGR2GRAY)
@@ -66,8 +58,6 @@ def remover_pelos_dullrazor(imagem_bgr):
     limiar = cv2.dilate(limiar, kernel, iterations=1)
 
     return cv2.inpaint(imagem, limiar, 9, cv2.INPAINT_TELEA)
-
-
 def aplicar_clahe(imagem_bgr):
     lab = cv2.cvtColor(imagem_bgr, cv2.COLOR_BGR2Lab)
     l, a, b = cv2.split(lab)
@@ -76,8 +66,6 @@ def aplicar_clahe(imagem_bgr):
     l = clahe.apply(l)
 
     return cv2.cvtColor(cv2.merge((l,a,b)), cv2.COLOR_Lab2BGR)
-
-
 def redimensionar_imagem(imagem, tamanho):
     if not USAR_GPU:
         return cv2.resize(imagem, tamanho)
@@ -89,7 +77,6 @@ def redimensionar_imagem(imagem, tamanho):
         return gpu.download()
     except:
         return cv2.resize(imagem, tamanho)
-
 # ====================== DEBUG ======================
 
 def salvar_imagens_debug(imagem, caminho):

@@ -1,41 +1,38 @@
 # README — predata.py
-
-Este documento descreve o propósito, uso e detalhes de implementação do script `predata.py`, usado para pré-processamento e divisão (split) de conjuntos de imagens dermatoscópicas (ISIC / datasets similares).
-
+Este documento descreve o propósito, uso e detalhes de 
+implementação do script `predata.py`, usado para pré-processamento e divisão (split) de conjuntos de imagens dermatoscópicas (ISIC / datasets similares).
 **Visão geral**
-
 O `predata.py` realiza duas tarefas principais:
-
 - Pré-processamento de imagens (remoção de marcadores coloridos, remoção de pelos com Dull Razor, equalização de contraste via CLAHE, redimensionamento).
 - Divisão do dataset por `lesion_id` (Group-aware split) para criar pastas `treino`, `validacao` e `teste` preservando lesões inteiras em um único conjunto.
 
 O script tenta usar aceleração via OpenCV CUDA quando disponível, e executa processamento paralelo com `ThreadPoolExecutor` para acelerar o pipeline em CPUs multi-core.
-
 Requisitos mínimos
-
 - Python 3.8+
 - numpy
 - pandas
 - scikit-learn
 - opencv-python (ou uma build do OpenCV com suporte CUDA se você pretende usar GPU)
-
 Sugestão de instalação (ambiente virtual):
-
 ```powershell
+
 python -m venv venv
 venv\Scripts\Activate.ps1
 pip install -U pip
 pip install numpy pandas scikit-learn opencv-python
-```
 
-Observação importante sobre GPU: as wheels oficiais do `opencv-python` normalmente NÃO incluem suporte CUDA. Para usar as rotinas `cv2.cuda.*` você precisa de uma build do OpenCV compilada com CUDA (instalada manualmente). O script detecta `cv2.cuda.getCudaEnabledDeviceCount()` e faz fallback automático para CPU se a GPU não estiver disponível.
+```
+Observação importante sobre GPU: as wheels oficiais do `opencv-python`
+normalmente NÃO incluem suporte CUDA. Para usar as rotinas `cv2.cuda.*` 
+você precisa de uma build do OpenCV compilada com CUDA (instalada manualmente). 
+O script detecta `cv2.cuda.getCudaEnabledDeviceCount()` e faz fallback automático
+para CPU se a GPU não estiver disponível.
 
 Uso básico
 
 ```powershell
 python predata.py --pasta-imagens archive/images --pasta-saida data/processado
 ```
-
 Uso com CSV para divisão por `lesion_id` (ex.: `GroundTruth.csv` do ISIC):
 
 ```powershell
@@ -45,9 +42,7 @@ python predata.py --pasta-imagens archive/images \
   --pasta-split data/split \
   --workers 8 --tamanho 224
 ```
-
 Argumentos disponíveis
-
 - `--pasta-imagens` (default: `images`) — pasta raiz com imagens a serem processadas (procura recursiva).
 - `--pasta-saida` (default: `data/processado`) — pasta onde as imagens processadas serão salvas, mantendo estrutura relativa.
 - `--csv` (default: None) — arquivo CSV contendo metadados (é necessário para a etapa de split por lesão).
@@ -136,11 +131,9 @@ O script contém rotinas comumente usadas em pipelines de processamento dermatos
 Licença
 
 Não há licença explícita no repositório. Verifique com o autor antes de redistribuir.
-
 ---
 
 Se quiser, eu posso também:
-
 - Gerar um `requirements.txt` contendo as dependências exatas usadas.
 - Adicionar um CSV de mapeamento final após o split.
 - Comitar esse README no repositório.
